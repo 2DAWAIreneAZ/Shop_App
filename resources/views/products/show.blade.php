@@ -36,45 +36,24 @@
         <hr>
 
         <h3><i class="fas fa-star"></i> Valorations</h3>
-        @if($product->valorations->count() > 0)
-            <div class="mb-3">
-                <strong>Average Rating:</strong>
-                <div class="star-rating d-inline">
-                    @for($i = 1; $i <= 5; $i++)
-                        @if($i <= round($product->averageRating()))
-                            <i class="fas fa-star"></i>
-                        @else
-                            <i class="far fa-star"></i>
-                        @endif
-                    @endfor
-                    <span class="text-muted">({{ number_format($product->averageRating(), 1) }})</span>
-                </div>
-            </div>
-
-            @foreach($product->valorations as $valoration)
-                <div class="card mb-3">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div class="star-rating">
-                                @for($i = 1; $i <= 5; $i++)
-                                    @if($i <= $valoration->puntuation)
-                                        <i class="fas fa-star"></i>
-                                    @else
-                                        <i class="far fa-star"></i>
-                                    @endif
-                                @endfor
-                            </div>
-                            <small class="text-muted">{{ $valoration->date->format('d/m/Y') }}</small>
-                        </div>
-                        @if($valoration->comment)
-                            <p class="mt-2 mb-0">{{ $valoration->comment }}</p>
-                        @endif
-                    </div>
-                </div>
-            @endforeach
-        @else
-            <p class="text-muted">No valorations yet. Be the first to rate this product!</p>
-        @endif
+				@if($product->valorations->isEmpty())
+						<p>No hay valoraciones para este producto.</p>
+				@else
+						<ul class="list-group">
+								@foreach($product->valorations as $valoration)
+										<li class="list-group-item d-flex justify-content-between align-items-center">
+												<div>
+														{{ $valoration->comment }}
+												</div>
+												<span class="badge bg-warning text-dark">
+														@for($i = 0; $i < $valoration->puntuation; $i++)
+																<i class="fas fa-star"></i>
+														@endfor
+												</span>
+										</li>
+								@endforeach
+						</ul>
+				@endif
     </div>
 </div>
 @endsection

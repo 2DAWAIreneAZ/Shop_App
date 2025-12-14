@@ -30,12 +30,29 @@ class ProductController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
 
+        try {
+        // Guardar la imagen si existe
         if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')->store('products', 'public');
+					$validated['image'] = $request->file('image')->store('products', 'public');
         }
 
-        Product::create($validated);
-        return redirect()->route('products.index')->with('success', 'Product created successfully');
+        $product = Product::create($validated);
+
+        $textMessage = 'El producto se ha creado correctamente.';
+        $result = true;
+
+				} catch (\Exception $e) {
+						$textMessage = 'El producto no se ha podido crear.';
+						$result = false;
+				}
+
+				$message = ['mensajeTexto' => $textMessage];
+
+				if ($result) {
+						return redirect()->route('products.index')->with($message);
+				} else {
+						return back()->withInput()->withErrors($message);
+				}
     }
 
     public function show(Product $product)
@@ -73,11 +90,31 @@ class ProductController extends Controller
         return redirect()->route('products.index')->with('success', 'Product updated successfully');
     }
 
-    public function destroy(Product $product){
+    public function destroy(Product $product) {
+        try {
+
         if ($product->image) {
-					Storage::disk('public')->delete($product->image);
+            Storage::disk('public')->delete($product->image);
         }
-        $product->delete();
-        return redirect()->route('products.index')->with('success', 'Product deleted successfully');
-    }
+
+        $product->valorations()->delete();
+
+        $result = $product->delete();
+
+        $textMessage = 'El producto se ha eliminado correctamente.';
+				
+				} catch (\Exception $e) {
+						\Log::error('Error deleting product: ' . $e->getMessage());
+						$textMessage = 'El producto no se ha podido eliminar.';
+						$result = false;
+				}
+
+				$message = ['mensajeTexto' => $textMessage];
+
+				if ($result) {
+						return redirect()->route('products.index')->with($message);
+				} else {
+						return back()->withInput()->withErrors($message);
+				}
+	}
 }

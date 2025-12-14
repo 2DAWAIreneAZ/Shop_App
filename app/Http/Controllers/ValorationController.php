@@ -20,14 +20,29 @@ class ValorationController extends Controller
 
     public function store(Request $request) {
         $validated = $request->validate([
-            'id_product' => 'required|exists:products,id',
+            'id_product' => 'required|exists:product,id',
             'puntuation' => 'required|integer|min:1|max:5',
             'comment' => 'nullable|string',
             'date' => 'required|date'
         ]);
 
-        Valoration::create($validated);
-        return redirect()->route('products.show', $validated['id_product'])->with('success', 'Valoration added successfully');
+        try {
+        $valoration = Valoration::create($validated);
+        $textMessage = 'La valoración se ha añadido correctamente.';
+        $result = true;
+
+				} catch (\Exception $e) {
+						$textMessage = 'La valoración no se ha podido añadir.';
+						$result = false;
+				}
+
+				$message = ['mensajeTexto' => $textMessage];
+
+				if ($result) {
+						return redirect()->route('products.show', $validated['id_product'])->with($message);
+				} else {
+						return back()->withInput()->withErrors($message);
+				}
     }
 
     public function edit(Valoration $valoration) {
@@ -35,10 +50,9 @@ class ValorationController extends Controller
         return view('valorations.edit', compact('valoration', 'products'));
     }
 
-    public function update(Request $request, Valoration $valoration)
-    {
+    public function update(Request $request, Valoration $valoration) {
         $validated = $request->validate([
-            'id_product' => 'required|exists:products,id',
+            'id_product' => 'required|exists:product,id',
             'puntuation' => 'required|integer|min:1|max:5',
             'comment' => 'nullable|string',
             'date' => 'required|date'
@@ -48,10 +62,24 @@ class ValorationController extends Controller
         return redirect()->route('products.show', $validated['id_product'])->with('success', 'Valoration updated successfully');
     }
 
-    public function destroy(Valoration $valoration)
-    {
+    public function destroy(Valoration $valoration) {
         $productId = $valoration->id_product;
-        $valoration->delete();
-        return redirect()->route('products.show', $productId)->with('success', 'Valoration deleted successfully');
-    }
+				try {
+					$result = $valoration->delete();
+					$textMessage = 'La valoración se ha eliminado correctamente.';
+
+			} catch (\Exception $e) {
+
+					$textMessage = 'La valoración no se ha podido eliminar.';
+					$result = false;
+			}
+
+			$message = ['mensajeTexto' => $textMessage];
+
+			if ($result) {
+					return redirect()->route('valorations.index', $productId)->with($message);
+			} else {
+					return back()->withInput()->withErrors($message);
+			}
+		}
 }

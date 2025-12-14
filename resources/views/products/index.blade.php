@@ -27,6 +27,14 @@
                 <a href="{{ route('products.show', $product) }}" class="btn btn-sm btn-primary">
                     View
                 </a>
+
+								<form action="{{ route('products.destroy', $product) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this product?');">
+									@csrf
+									@method('DELETE')
+									<button class="btn btn-sm btn-danger">
+											<i class="fas fa-trash">Delete</i>
+									</button>
+							</form>
             </td>
         </tr>
     @endforeach

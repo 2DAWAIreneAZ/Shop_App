@@ -66,9 +66,9 @@ class StyleController extends Controller {
     try {
         $result = $style->delete();
         $textMessage = 'El estilo se ha eliminado.';
-				
+
     } catch (\Exception $e) {
-        $textMessage = 'El estilo no se ha podido eliminar.';
+        $textMessage = 'El estilo no se ha podido eliminar. Primero revisa que no tenga productos.';
         $result = false;
     }
 

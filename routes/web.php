@@ -35,3 +35,4 @@ Route::get('/valorations/{valoration}', [ValorationController::class, 'show'])->
 Route::get('/valorations/{valoration}/edit', [ValorationController::class, 'edit'])->name('valorations.edit');
 Route::put('/valorations/{valoration}', [ValorationController::class, 'update'])->name('valorations.update');
 Route::delete('/valorations/{valoration}', [ValorationController::class, 'destroy'])->name('valorations.destroy');
+Route::delete('/valorations/{product}', [ValorationController::class, 'destroy'])->name('valorations.destroy');
