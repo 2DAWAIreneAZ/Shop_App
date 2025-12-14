@@ -10,34 +10,45 @@
     </a>
 </div>
 
-<table class="table table-hover">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Style</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-    @foreach($products as $product)
-        <tr>
-            <td>{{ $product->name }}</td>
-            <td>{{ $product->style->name }}</td>
-            <td>
+
+
+<div class="row">
+@forelse($products as $product)
+    <div class="col-md-4 mb-4">
+        <div class="card p-3">
+            <h5>{{ $product->name }}</h5>
+
+            <span class="badge difficulty-badge difficulty-{{ strtolower($product->style->difficulty) }}">
+                {{ $product->style->difficulty }}
+            </span>
+						
+						<div class="d-flex justify-content-between">
+							<p class="mt-2 mb-3">
+									<strong>{{ $product->style->name }}</strong>
+							</p>
+
+							<p class="mt-2 mb-3">
+									<strong>{{ $product->price }}€</strong>
+							</p>
+						</div>
+            <div class="d-flex justify-content-between">
                 <a href="{{ route('products.show', $product) }}" class="btn btn-sm btn-primary">
                     View
                 </a>
 
-								<form action="{{ route('products.destroy', $product) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this product?');">
+                <form action="{{ route('products.destroy', $product) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this product?');">
 									@csrf
 									@method('DELETE')
 									<button class="btn btn-sm btn-danger">
-											<i class="fas fa-trash">Delete</i>
+											<i class="fas fa-trash"></i>
 									</button>
 							</form>
-            </td>
-        </tr>
-    @endforeach
-    </tbody>
-</table>
+            </div>
+        </div>
+    </div>
+@empty
+    <p>No styles found.</p>
+@endforelse
+</div>
+
 @endsection
